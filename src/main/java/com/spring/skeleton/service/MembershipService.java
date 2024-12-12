@@ -7,8 +7,10 @@ import com.spring.skeleton.entity.MembershipEntity;
 import com.spring.skeleton.entity.QMembershipEntity;
 import com.spring.skeleton.exception.EntityNotFoundException;
 import com.spring.skeleton.model.Membership;
+import com.spring.skeleton.repository.MembershipRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,12 +25,15 @@ public interface MembershipService {
                       String name,
                       Integer price,
                       Integer duration) throws EntityNotFoundException;
+
+    void delete(Long id);
 }
 
 @Service
 @RequiredArgsConstructor
 class MembershipServiceImpl implements MembershipService {
 
+    private final MembershipRepository repository;
     private final JPAQueryFactory factory;
 
     QMembershipEntity entity = QMembershipEntity.membershipEntity;
@@ -36,12 +41,8 @@ class MembershipServiceImpl implements MembershipService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public Membership create(String name, Integer price, Integer duration) {
-        factory.insert(entity)
-                .columns(entity.name, entity.price, entity.duration)
-                .values(name, price, duration)
-                .execute();
-//TODO factory가 insert 후 id를 반환하거나 생성된 entity를 반환하는 메소드가 없어서 null을 반환하고 있습니다.
-        return null;
+        MembershipEntity m = repository.save(new MembershipEntity(name, price, duration));
+        return new Membership(m);
     }
 
     @Override
@@ -58,7 +59,7 @@ class MembershipServiceImpl implements MembershipService {
                 .where(condition)
                 .fetch();
 
-        return list.stream().map(MembershipEntity::toModel).toList();
+        return list.stream().map(Membership::new).toList();
     }
 
     @Override
@@ -67,19 +68,21 @@ class MembershipServiceImpl implements MembershipService {
                              String name,
                              Integer price,
                              Integer duration) throws EntityNotFoundException {
-//TODO id에 해당하는 entity가 없을 경우 EntityNotFoundException을 발생시켜야 합니다.
-        factory.selectFrom(entity)
-                .where(entity.id.eq(id))
-                .fetchOne();
+        MembershipEntity m = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Membership not found"));
 
-        factory.update(entity)
-                .where(entity.id.eq(id))
-                .set(entity.name, name)
-                .set(entity.price, price)
-                .set(entity.duration, duration)
-                .execute();
+        m.setName(name);
+        m.setPrice(price);
+        m.setDuration(duration);
 
-        MembershipEntity updated = new MembershipEntity(id, name, price, duration);
-        return MembershipEntity.toModel(updated);
+        return new Membership(m);
+    }
+
+    @Override
+    public void delete(Long id) {
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EntityNotFoundException("Membership not found");
+        }
     }
 }

@@ -4,36 +4,31 @@ import com.spring.skeleton.model.Membership;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "membership")
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MembershipEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)
-    private final Long id;
+    private Long id;
     @Column(nullable = false)
-    private final String name;
+    private String name;
     @Column(nullable = false)
-    private final Integer price;
+    private Integer price;
     @Column(nullable = false)
-    private final Integer duration;
+    private Integer duration;
 
-    public MembershipEntity() {
+    public MembershipEntity(String name, Integer price, Integer duration) {
         this.id = null;
-        this.name = null;
-        this.price = null;
-        this.duration = null;
-    }
-
-    public static Membership toModel(MembershipEntity entity) {
-        return new Membership(
-                entity.getId(),
-                entity.getName(),
-                entity.getPrice(),
-                entity.getDuration()
-        );
+        this.name = name;
+        this.price = price;
+        this.duration = duration;
     }
 }

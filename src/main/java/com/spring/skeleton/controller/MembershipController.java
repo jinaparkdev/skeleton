@@ -57,4 +57,10 @@ public class MembershipController {
 
         return ResponseEntity.ok().body(output);
     }
+
+    @DeleteMapping("/membership/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) throws EntityNotFoundException {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
