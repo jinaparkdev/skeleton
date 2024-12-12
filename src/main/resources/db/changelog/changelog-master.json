@@ -1,0 +1,237 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "membership-1",
+        "author": "jina",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "membership",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "price",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "duration",
+                    "type": "int",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "member-1",
+        "author": "jina",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "member",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "name",
+                    "type": "varchar(255)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "phone",
+                    "type": "varchar(255)",
+                    "constraints": {
+                      "nullable": false,
+                      "unique": true
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "updated_at",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "membership-mapping-1",
+        "author": "jina",
+        "changes": [
+          {
+            "createTable": {
+              "tableName": "membership_mapping",
+              "columns": [
+                {
+                  "column": {
+                    "name": "id",
+                    "type": "bigint",
+                    "autoIncrement": true,
+                    "constraints": {
+                      "primaryKey": true,
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "member_id",
+                    "type": "bigint",
+                    "constraints": {
+                      "nullable": false,
+                      "foreignKeyName": "fk_membership_mapping_member",
+                      "references": "member(id)"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "membership_id",
+                    "type": "bigint",
+                    "constraints": {
+                      "nullable": false,
+                      "foreignKeyName": "fk_membership_mapping_membership",
+                      "references": "membership(id)"
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "start_date",
+                    "type": "timestamp"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "end_date",
+                    "type": "timestamp"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "status",
+                    "type": "varchar(255)"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "created_at",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
+                    "name": "updated_at",
+                    "type": "timestamp",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "create-default-membership",
+        "author": "jina",
+        "changes": [
+          {
+            "insert": {
+              "columns": [
+                {
+                  "column": {
+                    "name": "name",
+                    "value": "샘플"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "price",
+                    "value": "100000"
+                  }
+                },
+                {
+                  "column": {
+                    "name": "duration",
+                    "value": "1"
+                  }
+                }
+              ],
+              "tableName": "membership"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,7 +1,6 @@
 package com.spring.skeleton.model
 
 import com.spring.skeleton.entity.MembershipMappingEntity
-import java.sql.Timestamp
 import java.time.Instant
 
 data class Member(
