@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "member")
@@ -21,9 +21,9 @@ public class MemberEntity {
     @Column(nullable = false, unique = true)
     private String phone;
     @Column(nullable = false)
-    private Timestamp createdAt;
+    private Instant createdAt;
     @Column(nullable = false)
-    private Timestamp updatedAt;
+    private Instant updatedAt;
 
     public Long getId() {
         return id;
@@ -37,19 +37,20 @@ public class MemberEntity {
         return phone;
     }
 
-    public Timestamp getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
     public MemberEntity(String name, String phone) {
+        Instant now = Instant.now();
         this.id = null;
         this.name = name;
         this.phone = phone;
-        this.createdAt = new Timestamp(System.currentTimeMillis());
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 }

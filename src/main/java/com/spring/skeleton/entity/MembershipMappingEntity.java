@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 
 @Entity
@@ -30,9 +29,9 @@ public class MembershipMappingEntity {
     private String status;
 
     @Column(nullable = false)
-    private Timestamp createdAt;
+    private Instant createdAt;
     @Column(nullable = false)
-    private Timestamp updatedAt;
+    private Instant updatedAt;
 
     public Long getId() {
         return id;
@@ -58,11 +57,11 @@ public class MembershipMappingEntity {
         return status;
     }
 
-    public Timestamp getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
@@ -70,12 +69,14 @@ public class MembershipMappingEntity {
                                    MembershipEntity membership,
                                    Instant startDate,
                                    String status) {
+        Instant now = Instant.now();
+
         this.id = null;
         this.member = member;
         this.membership = membership;
         this.status = status;
-        this.createdAt = new Timestamp(System.currentTimeMillis());
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
+        this.createdAt = now;
+        this.updatedAt = now;
         this.startDate = startDate;
         this.endDate = startDate.plusSeconds(60 * 60 * 24 * 30);
     }
