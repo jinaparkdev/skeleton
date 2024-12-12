@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService service;
+    private final Validate validate = new Validate();
 
     @Getter
     @Setter
@@ -30,8 +32,6 @@ public class MemberController {
         private String startDate;
         private String isRejoin;
     }
-
-    private final Validate validate = new Validate();
 
     @PostMapping("/member")
     public ResponseEntity<MemberDetail> create(@RequestBody CreateMemberRequest request) {
@@ -53,19 +53,18 @@ public class MemberController {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<List<Member>> find(@RequestParam(required = false) String name,
-                                             @RequestParam(required = false) String phone,
-                                             @RequestParam(required = false) Long membershipId,
-                                             @RequestParam(required = false) String startDate,
-                                             @RequestParam(required = false) String endDate,
-                                             @RequestParam(required = false) String status) {
+    public ResponseEntity<List<Member>> find(@RequestParam Optional<String> name,
+                                             @RequestParam Optional<String> phone,
+                                             @RequestParam Optional<Long> membershipId,
+                                             @RequestParam Optional<String> startDate,
+                                             @RequestParam Optional<String> endDate,
+                                             @RequestParam Optional<String> status) {
 
-        Instant startDt = startDate != null ?
-                validate.ensureDate(startDate).confirm(Converter.toInstant(startDate)) : null;
-        Instant endDt = endDate != null ?
-                validate.ensureDate(endDate).confirm(Converter.toInstant(endDate)) : null;
-        MembershipStatus membershipStatus =
-                status != null ? MembershipStatus.fromString(status) : null;
+        Optional<Instant> startDt = startDate.map(validate::ensureAndGetDate)
+                .map(Converter::toInstant);
+        Optional<Instant> endDt = endDate.map(validate::ensureAndGetDate)
+                .map(Converter::toInstant);
+        Optional<MembershipStatus> membershipStatus = status.map(MembershipStatus::fromString);
 
         List<Member> output =
                 service.find(name, phone, membershipId, startDt, endDt, membershipStatus);

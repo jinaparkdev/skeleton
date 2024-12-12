@@ -50,6 +50,19 @@ public class Validate {
         return this;
     }
 
+    public String ensureAndGetDate(String value) {
+
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("Date must not be null or empty");
+        }
+
+        if (!value.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+            throw new IllegalArgumentException("Date must be in yyyy-MM-dd format");
+        }
+
+        return value;
+    }
+
     public Validate ensureBoolean(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Boolean must not be null or empty");

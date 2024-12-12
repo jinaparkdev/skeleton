@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,8 +47,8 @@ public class MembershipController {
     }
 
     @GetMapping("/membership")
-    public ResponseEntity<List<Membership>> find(@RequestParam(required = false) String name,
-                                                 @RequestParam(required = false) Integer duration) {
+    public ResponseEntity<List<Membership>> find(@RequestParam Optional<String> name,
+                                                 @RequestParam Optional<Integer> duration) {
 
         List<Membership> output = service.find(name, duration);
         return ResponseEntity.ok().body(output);

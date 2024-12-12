@@ -14,12 +14,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MembershipService {
 
     Membership create(String name, Integer price, Integer duration);
 
-    List<Membership> find(String name, Integer duration);
+    List<Membership> find(Optional<String> name, Optional<Integer> duration);
 
     Membership update(Long id,
                       String name,
@@ -46,12 +47,12 @@ class MembershipServiceImpl implements MembershipService {
     }
 
     @Override
-    public List<Membership> find(String name, Integer duration) {
+    public List<Membership> find(Optional<String> name, Optional<Integer> duration) {
 
         BooleanExpression matchesName =
-                name != null ? entity.name.containsIgnoreCase(name) : entity.isNotNull();
+                name.map(entity.name::eq).orElseGet(entity::isNotNull);
         BooleanExpression matchesDuration =
-                duration != null ? entity.duration.eq(duration) : entity.isNotNull();
+                duration.map(entity.duration::eq).orElseGet(entity::isNotNull);
 
         Predicate condition = matchesName.and(matchesDuration);
 
