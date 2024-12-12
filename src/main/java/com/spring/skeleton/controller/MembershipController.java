@@ -26,7 +26,7 @@ public class MembershipController {
         private Integer duration;
     }
 
-    private Validate validate = new Validate();
+    private final Validate validate = new Validate();
 
     @PostMapping("/membership")
     public ResponseEntity<Membership> create(@RequestBody CreateMembershipRequest request) {

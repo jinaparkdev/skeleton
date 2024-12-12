@@ -30,17 +30,15 @@ public class MemberController {
         private String startDate;
     }
 
-    private Validate validate = new Validate();
+    private final Validate validate = new Validate();
 
     @PostMapping("/member")
     public ResponseEntity<MemberDetail> create(@RequestBody CreateMemberRequest request) {
 
         CreateMemberRequest validated =
                 validate.notNullOrEmpty(request.getName(), "Name")
-                        .notNullOrEmpty(request.getPhone(), "Phone")
                         .ensurePhoneNumber(request.getPhone())
                         .notNullOrEmpty(request.getMembershipId(), "Membership ID")
-                        .notNullOrEmpty(request.getStartDate(), "Start Date")
                         .ensureDate(request.getStartDate())
                         .confirm(request);
 
