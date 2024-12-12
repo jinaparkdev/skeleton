@@ -1,5 +1,6 @@
 package com.spring.skeleton.controller;
 
+import com.spring.skeleton.common.Validate;
 import com.spring.skeleton.exception.EntityNotFoundException;
 import com.spring.skeleton.model.Membership;
 import com.spring.skeleton.service.MembershipService;
@@ -25,13 +26,21 @@ public class MembershipController {
         private Integer duration;
     }
 
+    private Validate validate = new Validate();
+
     @PostMapping("/membership")
     public ResponseEntity<Membership> create(@RequestBody CreateMembershipRequest request) {
 
+        CreateMembershipRequest validated =
+                validate.notNullOrEmpty(request.getName(), "Name")
+                        .notNullOrEmpty(request.getPrice(), "Price")
+                        .notNullOrEmpty(request.getDuration(), "Duration")
+                        .confirm(request);
+
         Membership output = service.create(
-                request.getName(),
-                request.getPrice(),
-                request.getDuration()
+                validated.getName(),
+                validated.getPrice(),
+                validated.getDuration()
                                           );
         return ResponseEntity.ok().body(output);
     }
@@ -47,12 +56,17 @@ public class MembershipController {
     @PutMapping("/membership/{id}")
     public ResponseEntity<Membership> update(@PathVariable Long id,
                                              @RequestBody CreateMembershipRequest request) throws EntityNotFoundException {
+        CreateMembershipRequest validated =
+                validate.notNullOrEmpty(request.getName(), "Name")
+                        .notNullOrEmpty(request.getPrice(), "Price")
+                        .notNullOrEmpty(request.getDuration(), "Duration")
+                        .confirm(request);
 
         Membership output = service.update(
                 id,
-                request.getName(),
-                request.getPrice(),
-                request.getDuration()
+                validated.getName(),
+                validated.getPrice(),
+                validated.getDuration()
                                           );
 
         return ResponseEntity.ok().body(output);

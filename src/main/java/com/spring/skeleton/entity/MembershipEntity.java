@@ -1,15 +1,12 @@
 package com.spring.skeleton.entity;
 
-import com.spring.skeleton.model.Membership;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "membership")
-@Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,6 +21,22 @@ public class MembershipEntity {
     private Integer price;
     @Column(nullable = false)
     private Integer duration;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
 
     public MembershipEntity(String name, Integer price, Integer duration) {
         this.id = null;

@@ -36,7 +36,7 @@ class MembershipServiceImpl implements MembershipService {
     private final MembershipRepository repository;
     private final JPAQueryFactory factory;
 
-    QMembershipEntity entity = QMembershipEntity.membershipEntity;
+    private final QMembershipEntity entity = QMembershipEntity.membershipEntity;
 
     @Override
     @Transactional(rollbackOn = Exception.class)
@@ -50,8 +50,8 @@ class MembershipServiceImpl implements MembershipService {
 
         BooleanExpression matchesName =
                 name != null ? entity.name.containsIgnoreCase(name) : entity.isNotNull();
-
-        BooleanExpression matchesDuration = duration != null ? entity.duration.eq(duration) : entity.isNotNull();
+        BooleanExpression matchesDuration =
+                duration != null ? entity.duration.eq(duration) : entity.isNotNull();
 
         Predicate condition = matchesName.and(matchesDuration);
 
@@ -68,7 +68,8 @@ class MembershipServiceImpl implements MembershipService {
                              String name,
                              Integer price,
                              Integer duration) throws EntityNotFoundException {
-        MembershipEntity m = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Membership not found"));
+        MembershipEntity m = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Membership not found"));
 
         m.setName(name);
         m.setPrice(price);

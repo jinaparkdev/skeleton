@@ -1,10 +1,13 @@
 package com.spring.skeleton.model
 
 import com.spring.skeleton.entity.MembershipEntity
+import java.time.Instant
 
 interface HasMembership {
     val membership: Membership
     val status: MembershipStatus
+    val startDate: Instant
+    val endDate: Instant
 }
 
 data class Membership(
@@ -20,4 +23,17 @@ enum class MembershipStatus {
     New,
     ReRegistered,
     Expired;
+
+    companion object {
+
+        @JvmStatic
+        fun fromString(value: String): MembershipStatus {
+            return when (value) {
+                "New" -> New
+                "ReRegistered" -> ReRegistered
+                "Expired" -> Expired
+                else -> throw IllegalArgumentException("Invalid value: $value")
+            }
+        }
+    }
 }
