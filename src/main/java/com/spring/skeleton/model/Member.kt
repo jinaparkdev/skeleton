@@ -6,7 +6,6 @@ import java.time.Instant
 data class Member(
     var id: Long,
     var name: String,
-    var phone: String,
     override var membership: Membership,
     override var startDate: Instant,
     override var endDate: Instant,
@@ -16,7 +15,6 @@ data class Member(
     constructor(entity: MembershipMappingEntity) : this(
         id = entity.member.id,
         name = entity.member.name,
-        phone = entity.member.phone,
         membership = Membership(entity.membership),
         startDate = entity.startDate,
         endDate = entity.endDate,

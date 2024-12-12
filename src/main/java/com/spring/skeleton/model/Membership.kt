@@ -21,7 +21,7 @@ data class Membership(
 
 enum class MembershipStatus {
     New,
-    ReRegistered,
+    Rejoined,
     Expired;
 
     companion object {
@@ -30,7 +30,7 @@ enum class MembershipStatus {
         fun fromString(value: String): MembershipStatus {
             return when (value) {
                 "New" -> New
-                "ReRegistered" -> ReRegistered
+                "Rejoined" -> Rejoined
                 "Expired" -> Expired
                 else -> throw IllegalArgumentException("Invalid value: $value")
             }

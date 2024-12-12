@@ -28,6 +28,7 @@ public class MemberController {
         private String phone;
         private Long membershipId;
         private String startDate;
+        private String isRejoin;
     }
 
     private final Validate validate = new Validate();
@@ -69,6 +70,34 @@ public class MemberController {
         List<Member> output =
                 service.find(name, phone, membershipId, startDt, endDt, membershipStatus);
 
+        return ResponseEntity.ok(output);
+    }
+
+    @GetMapping("/member/{id}")
+    public ResponseEntity<MemberDetail> findById(@PathVariable Long id) {
+        MemberDetail output = service.findById(id);
+        return ResponseEntity.ok(output);
+    }
+
+    @PutMapping("/member/{id}")
+    public ResponseEntity<MemberDetail> update(@PathVariable Long id,
+                                               @RequestBody CreateMemberRequest request) {
+        CreateMemberRequest validated =
+                validate.notNullOrEmpty(request.getName(), "Name")
+                        .ensurePhoneNumber(request.getPhone())
+                        .notNullOrEmpty(request.getMembershipId(), "Membership ID")
+                        .ensureDate(request.getStartDate())
+                        .ensureBoolean(request.getIsRejoin())
+                        .confirm(request);
+
+        MemberDetail output = service.update(
+                id,
+                validated.getName(),
+                validated.getPhone(),
+                validated.getMembershipId(),
+                Converter.toInstant(validated.getStartDate()),
+                Boolean.valueOf(request.getIsRejoin())
+                                            );
         return ResponseEntity.ok(output);
     }
 }

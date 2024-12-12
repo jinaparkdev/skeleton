@@ -50,6 +50,18 @@ public class Validate {
         return this;
     }
 
+    public Validate ensureBoolean(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new IllegalArgumentException("Boolean must not be null or empty");
+        }
+
+        if (!value.matches("^(true|false)$")) {
+            throw new IllegalArgumentException("Boolean must be true or false");
+        }
+
+        return this;
+    }
+
     public <T> T confirm(T value) {
         return value;
     }
