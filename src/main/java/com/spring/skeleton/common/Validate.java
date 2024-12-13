@@ -1,5 +1,7 @@
 package com.spring.skeleton.common;
 
+import java.time.Instant;
+
 public class Validate {
     public <T> Validate notNullOrEmpty(T value, String label) {
         if (value == null) {
@@ -50,7 +52,7 @@ public class Validate {
         return this;
     }
 
-    public String ensureAndGetDate(String value) {
+    public Instant ensureAndGetDate(String value) {
 
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Date must not be null or empty");
@@ -60,7 +62,7 @@ public class Validate {
             throw new IllegalArgumentException("Date must be in yyyy-MM-dd format");
         }
 
-        return value;
+        return Converter.toInstant(value);
     }
 
     public Validate ensureBoolean(String value) {

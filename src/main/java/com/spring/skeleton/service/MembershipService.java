@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.spring.skeleton.entity.MembershipEntity;
 import com.spring.skeleton.entity.QMembershipEntity;
+import com.spring.skeleton.entity.Resolver;
 import com.spring.skeleton.exception.EntityNotFoundException;
 import com.spring.skeleton.model.Membership;
 import com.spring.skeleton.repository.MembershipRepository;
@@ -32,7 +33,7 @@ public interface MembershipService {
 
 @Service
 @RequiredArgsConstructor
-class MembershipServiceImpl implements MembershipService {
+class MembershipServiceImpl extends Resolver implements MembershipService {
 
     private final MembershipRepository repository;
     private final JPAQueryFactory factory;
@@ -69,8 +70,7 @@ class MembershipServiceImpl implements MembershipService {
                              String name,
                              Integer price,
                              Integer duration) throws EntityNotFoundException {
-        MembershipEntity m = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Membership not found"));
+        MembershipEntity m = resolve(repository, id);
 
         m.setName(name);
         m.setPrice(price);

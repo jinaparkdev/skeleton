@@ -42,7 +42,7 @@ public interface MemberService {
 
 @Service
 @RequiredArgsConstructor
-class MemberServiceImpl implements MemberService {
+class MemberServiceImpl extends Resolver implements MemberService {
 
     private final MemberRepository memberRepository;
     private final MembershipRepository membershipRepository;
@@ -59,7 +59,7 @@ class MemberServiceImpl implements MemberService {
 
         String phoneNum = ensureAvailablePhone(phone, null);
 
-        MembershipEntity membership = ensureExistingMembership(membershipId);
+        MembershipEntity membership = resolve(membershipRepository, membershipId);
         MemberEntity member = new MemberEntity(name, phoneNum);
         memberRepository.save(member);
 
@@ -131,12 +131,12 @@ class MemberServiceImpl implements MemberService {
 
         String phoneNum = ensureAvailablePhone(phone, id);
 
-        MemberEntity member = ensureExistingMember(id);
+        MemberEntity member = resolve(memberRepository, id);
         member.setName(name);
         member.setPhone(phoneNum);
 
-        MembershipEntity membership = ensureExistingMembership(membershipId);
-        MembershipMappingEntity mapping = ensureExistingMapping(id);
+        MembershipEntity membership = resolve(membershipRepository, membershipId);
+        MembershipMappingEntity mapping = resolve(mappingRepository, id);
         mapping.setMembership(membership);
         mapping.setStartDate(startDate);
 
@@ -154,20 +154,5 @@ class MemberServiceImpl implements MemberService {
                         throw new AlreadyExistException("Phone number already exists");
                 });
         return phone;
-    }
-
-    private MembershipMappingEntity ensureExistingMapping(Long id) {
-        return mappingRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Membership not found"));
-    }
-
-    private MembershipEntity ensureExistingMembership(Long id) {
-        return membershipRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Membership not found"));
-    }
-
-    private MemberEntity ensureExistingMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Member not found"));
     }
 }

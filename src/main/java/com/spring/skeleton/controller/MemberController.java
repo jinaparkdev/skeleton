@@ -60,10 +60,8 @@ public class MemberController {
                                              @RequestParam Optional<String> endDate,
                                              @RequestParam Optional<String> status) {
 
-        Optional<Instant> startDt = startDate.map(validate::ensureAndGetDate)
-                .map(Converter::toInstant);
-        Optional<Instant> endDt = endDate.map(validate::ensureAndGetDate)
-                .map(Converter::toInstant);
+        Optional<Instant> startDt = startDate.map(validate::ensureAndGetDate);
+        Optional<Instant> endDt = endDate.map(validate::ensureAndGetDate);
         Optional<MembershipStatus> membershipStatus = status.map(MembershipStatus::fromString);
 
         List<Member> output =
