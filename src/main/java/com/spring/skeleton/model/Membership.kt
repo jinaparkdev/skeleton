@@ -4,7 +4,7 @@ import com.spring.skeleton.entity.MembershipEntity
 import java.time.Instant
 
 interface HasMembership {
-    val membership: Membership
+    val membership: Label<Long>
     val status: MembershipStatus
     val startDate: Instant
     val endDate: Instant
