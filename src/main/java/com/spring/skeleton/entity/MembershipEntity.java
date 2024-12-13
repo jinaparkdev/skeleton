@@ -22,6 +22,10 @@ public class MembershipEntity {
     @Column(nullable = false)
     private Integer duration;
 
+    @OneToOne
+    @JoinColumn(name = "company_id", nullable = false)
+    private CompanyEntity company;
+
     public Long getId() {
         return id;
     }
@@ -36,6 +40,10 @@ public class MembershipEntity {
 
     public Integer getDuration() {
         return duration;
+    }
+
+    public CompanyEntity getCompany() {
+        return company;
     }
 
     public MembershipEntity(String name, Integer price, Integer duration) {

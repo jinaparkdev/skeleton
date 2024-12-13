@@ -14,9 +14,16 @@ data class Membership(
     val id: Long,
     val name: String,
     val price: Int,
-    val duration: Int
-) {
-    constructor(entity: MembershipEntity) : this(entity.id, entity.name, entity.price, entity.duration)
+    val duration: Int,
+    override val company: Label<Long>
+) : BelongsToCompany {
+    constructor(entity: MembershipEntity) : this(
+        entity.id,
+        entity.name,
+        entity.price,
+        entity.duration,
+        Label(entity.company.name, entity.company.id)
+    )
 }
 
 enum class MembershipStatus {
