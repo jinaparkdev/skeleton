@@ -1,7 +1,7 @@
 package com.spring.skeleton.controller;
 
 import com.spring.skeleton.common.Converter;
-import com.spring.skeleton.common.Validate;
+import com.spring.skeleton.common.Validator;
 import com.spring.skeleton.model.Member;
 import com.spring.skeleton.model.MemberDetail;
 import com.spring.skeleton.model.MembershipStatus;
@@ -18,10 +18,9 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberController extends Validator {
 
     private final MemberService service;
-    private final Validate validate = new Validate();
 
     @Getter
     @Setter
@@ -36,12 +35,11 @@ public class MemberController {
     @PostMapping("/member")
     public ResponseEntity<MemberDetail> create(@RequestBody CreateMemberRequest request) {
 
-        CreateMemberRequest validated =
-                validate.notNullOrEmpty(request.getName(), "Name")
-                        .ensurePhoneNumber(request.getPhone())
-                        .notNullOrEmpty(request.getMembershipId(), "Membership ID")
-                        .ensureDate(request.getStartDate())
-                        .confirm(request);
+        CreateMemberRequest validated = notNullOrEmpty(request.getName(), "Name")
+                .ensurePhoneNumber(request.getPhone())
+                .notNullOrEmpty(request.getMembershipId(), "Membership ID")
+                .ensureDate(request.getStartDate())
+                .confirm(request);
 
         MemberDetail output = service.create(
                 validated.getName(),
@@ -60,8 +58,8 @@ public class MemberController {
                                              @RequestParam Optional<String> endDate,
                                              @RequestParam Optional<String> status) {
 
-        Optional<Instant> startDt = startDate.map(validate::ensureAndGetDate);
-        Optional<Instant> endDt = endDate.map(validate::ensureAndGetDate);
+        Optional<Instant> startDt = startDate.map(d -> ensureAndGetDate(d));
+        Optional<Instant> endDt = endDate.map(d -> ensureAndGetDate(d));
         Optional<MembershipStatus> membershipStatus = status.map(MembershipStatus::fromString);
 
         List<Member> output =
@@ -79,13 +77,12 @@ public class MemberController {
     @PutMapping("/member/{id}")
     public ResponseEntity<MemberDetail> update(@PathVariable Long id,
                                                @RequestBody CreateMemberRequest request) {
-        CreateMemberRequest validated =
-                validate.notNullOrEmpty(request.getName(), "Name")
-                        .ensurePhoneNumber(request.getPhone())
-                        .notNullOrEmpty(request.getMembershipId(), "Membership ID")
-                        .ensureDate(request.getStartDate())
-                        .ensureBoolean(request.getIsRejoin())
-                        .confirm(request);
+        CreateMemberRequest validated = notNullOrEmpty(request.getName(), "Name")
+                .ensurePhoneNumber(request.getPhone())
+                .notNullOrEmpty(request.getMembershipId(), "Membership ID")
+                .ensureDate(request.getStartDate())
+                .ensureBoolean(request.getIsRejoin())
+                .confirm(request);
 
         MemberDetail output = service.update(
                 id,

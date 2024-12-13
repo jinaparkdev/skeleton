@@ -2,8 +2,8 @@ package com.spring.skeleton.common;
 
 import java.time.Instant;
 
-public class Validate {
-    public <T> Validate notNullOrEmpty(T value, String label) {
+public abstract class Validator {
+    public <T> Validator notNullOrEmpty(T value, String label) {
         if (value == null) {
             throw new IllegalArgumentException(label + " must not be null");
         }
@@ -15,7 +15,7 @@ public class Validate {
         return this;
     }
 
-    public Validate ensurePhoneNumber(String value) {
+    public Validator ensurePhoneNumber(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Phone number must not be null or empty");
         }
@@ -27,7 +27,7 @@ public class Validate {
         return this;
     }
 
-    public Validate ensureEmail(String value) {
+    public Validator ensureEmail(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Email must not be null or empty");
         }
@@ -39,7 +39,7 @@ public class Validate {
         return this;
     }
 
-    public Validate ensureDate(String value) {
+    public Validator ensureDate(String value) {
 
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Date must not be null or empty");
@@ -65,7 +65,7 @@ public class Validate {
         return Converter.toInstant(value);
     }
 
-    public Validate ensureBoolean(String value) {
+    public Validator ensureBoolean(String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("Boolean must not be null or empty");
         }
