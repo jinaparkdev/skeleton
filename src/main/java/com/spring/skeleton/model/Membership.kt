@@ -1,5 +1,6 @@
 package com.spring.skeleton.model
 
+import com.spring.skeleton.common.Label
 import com.spring.skeleton.entity.MembershipEntity
 import java.time.Instant
 

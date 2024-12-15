@@ -1,5 +1,6 @@
 package com.spring.skeleton.model
 
+import com.spring.skeleton.common.Label
 import com.spring.skeleton.entity.CompanyEntity
 
 data class Company(
@@ -7,7 +8,7 @@ data class Company(
     val name: String,
     val email: String,
     val phone: String
-){
+) {
     constructor(entity: CompanyEntity) : this(
         entity.id,
         entity.name,

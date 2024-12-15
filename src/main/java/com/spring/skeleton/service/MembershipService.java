@@ -3,11 +3,13 @@ package com.spring.skeleton.service;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.spring.skeleton.entity.CompanyEntity;
 import com.spring.skeleton.entity.MembershipEntity;
 import com.spring.skeleton.entity.QMembershipEntity;
 import com.spring.skeleton.entity.Resolver;
 import com.spring.skeleton.exception.EntityNotFoundException;
 import com.spring.skeleton.model.Membership;
+import com.spring.skeleton.repository.CompanyRepository;
 import com.spring.skeleton.repository.MembershipRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,9 @@ import java.util.Optional;
 
 public interface MembershipService {
 
-    Membership create(String name, Integer price, Integer duration);
+    Membership create(String name, Integer price, Integer duration, Long companyId);
 
-    List<Membership> find(Optional<String> name, Optional<Integer> duration);
+    List<Membership> find(Optional<String> name, Optional<Integer> duration, Long companyId);
 
     Membership update(Long id,
                       String name,
@@ -36,26 +38,31 @@ public interface MembershipService {
 class MembershipServiceImpl extends Resolver implements MembershipService {
 
     private final MembershipRepository repository;
+    private final CompanyRepository companyRepository;
     private final JPAQueryFactory factory;
 
     private final QMembershipEntity entity = QMembershipEntity.membershipEntity;
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public Membership create(String name, Integer price, Integer duration) {
-        MembershipEntity m = repository.save(new MembershipEntity(name, price, duration));
+    public Membership create(String name, Integer price, Integer duration, Long companyId) {
+        CompanyEntity company = resolve(companyRepository, companyId);
+        MembershipEntity m = repository.save(new MembershipEntity(name, price, duration, company));
         return new Membership(m);
     }
 
     @Override
-    public List<Membership> find(Optional<String> name, Optional<Integer> duration) {
+    public List<Membership> find(Optional<String> name,
+                                 Optional<Integer> duration,
+                                 Long companyId) {
 
         BooleanExpression matchesName =
                 name.map(entity.name::eq).orElseGet(entity::isNotNull);
         BooleanExpression matchesDuration =
                 duration.map(entity.duration::eq).orElseGet(entity::isNotNull);
+        BooleanExpression matchesCompany = entity.company.id.eq(companyId);
 
-        Predicate condition = matchesName.and(matchesDuration);
+        Predicate condition = matchesName.and(matchesDuration).and(matchesCompany);
 
         List<MembershipEntity> list = factory.selectFrom(entity)
                 .where(condition)

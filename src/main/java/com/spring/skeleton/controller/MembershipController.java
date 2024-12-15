@@ -1,6 +1,7 @@
 package com.spring.skeleton.controller;
 
-import com.spring.skeleton.common.Validator;
+import com.spring.skeleton.util.JwtManager;
+import com.spring.skeleton.util.Validator;
 import com.spring.skeleton.exception.EntityNotFoundException;
 import com.spring.skeleton.model.Membership;
 import com.spring.skeleton.service.MembershipService;
@@ -18,43 +19,50 @@ import java.util.Optional;
 public class MembershipController extends Validator {
 
     private final MembershipService service;
+    private final JwtManager jwtManager;
 
     @Getter
     @Setter
-    public static class CreateMembershipRequest {
+    public static class Request {
         private String name;
         private Integer price;
         private Integer duration;
     }
 
     @PostMapping("/membership")
-    public ResponseEntity<Membership> create(@RequestBody CreateMembershipRequest request) {
+    public ResponseEntity<Membership> create(@RequestHeader("Authorization") String token,
+                                             @RequestBody Request request) {
 
-        CreateMembershipRequest validated = notNullOrEmpty(request.getName(), "Name")
+        Request validated = notNullOrEmpty(request.getName(), "Name")
                 .notNullOrEmpty(request.getPrice(), "Price")
                 .notNullOrEmpty(request.getDuration(), "Duration")
                 .confirm(request);
 
+        Long companyId = jwtManager.getIdFromToken(token);
+
         Membership output = service.create(
                 validated.getName(),
                 validated.getPrice(),
-                validated.getDuration()
+                validated.getDuration(),
+                companyId
                                           );
         return ResponseEntity.ok().body(output);
     }
 
     @GetMapping("/membership")
-    public ResponseEntity<List<Membership>> find(@RequestParam Optional<String> name,
+    public ResponseEntity<List<Membership>> find(@RequestHeader("Authorization") String token,
+                                                 @RequestParam Optional<String> name,
                                                  @RequestParam Optional<Integer> duration) {
 
-        List<Membership> output = service.find(name, duration);
+        Long companyId = jwtManager.getIdFromToken(token);
+        List<Membership> output = service.find(name, duration, companyId);
         return ResponseEntity.ok().body(output);
     }
 
     @PutMapping("/membership/{id}")
     public ResponseEntity<Membership> update(@PathVariable Long id,
-                                             @RequestBody CreateMembershipRequest request) throws EntityNotFoundException {
-        CreateMembershipRequest validated = notNullOrEmpty(request.getName(), "Name")
+                                             @RequestBody Request request) throws EntityNotFoundException {
+        Request validated = notNullOrEmpty(request.getName(), "Name")
                 .notNullOrEmpty(request.getPrice(), "Price")
                 .notNullOrEmpty(request.getDuration(), "Duration")
                 .confirm(request);

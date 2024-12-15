@@ -1,7 +1,7 @@
 package com.spring.skeleton.controller;
 
-import com.spring.skeleton.common.Converter;
-import com.spring.skeleton.common.Validator;
+import com.spring.skeleton.util.Converter;
+import com.spring.skeleton.util.Validator;
 import com.spring.skeleton.model.Member;
 import com.spring.skeleton.model.MemberDetail;
 import com.spring.skeleton.model.MembershipStatus;
@@ -24,7 +24,7 @@ public class MemberController extends Validator {
 
     @Getter
     @Setter
-    public static class CreateMemberRequest {
+    public static class Request {
         private String name;
         private String phone;
         private Long membershipId;
@@ -33,9 +33,9 @@ public class MemberController extends Validator {
     }
 
     @PostMapping("/member")
-    public ResponseEntity<MemberDetail> create(@RequestBody CreateMemberRequest request) {
+    public ResponseEntity<MemberDetail> create(@RequestBody Request request) {
 
-        CreateMemberRequest validated = notNullOrEmpty(request.getName(), "Name")
+        Request validated = notNullOrEmpty(request.getName(), "Name")
                 .ensurePhoneNumber(request.getPhone())
                 .notNullOrEmpty(request.getMembershipId(), "Membership ID")
                 .ensureDate(request.getStartDate())
@@ -58,8 +58,8 @@ public class MemberController extends Validator {
                                              @RequestParam Optional<String> endDate,
                                              @RequestParam Optional<String> status) {
 
-        Optional<Instant> startDt = startDate.map(d -> ensureAndGetDate(d));
-        Optional<Instant> endDt = endDate.map(d -> ensureAndGetDate(d));
+        Optional<Instant> startDt = startDate.map(this::ensureAndGetDate);
+        Optional<Instant> endDt = endDate.map(this::ensureAndGetDate);
         Optional<MembershipStatus> membershipStatus = status.map(MembershipStatus::fromString);
 
         List<Member> output =
@@ -76,8 +76,8 @@ public class MemberController extends Validator {
 
     @PutMapping("/member/{id}")
     public ResponseEntity<MemberDetail> update(@PathVariable Long id,
-                                               @RequestBody CreateMemberRequest request) {
-        CreateMemberRequest validated = notNullOrEmpty(request.getName(), "Name")
+                                               @RequestBody Request request) {
+        Request validated = notNullOrEmpty(request.getName(), "Name")
                 .ensurePhoneNumber(request.getPhone())
                 .notNullOrEmpty(request.getMembershipId(), "Membership ID")
                 .ensureDate(request.getStartDate())

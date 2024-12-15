@@ -22,17 +22,19 @@ public class CompanyEntity {
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
     private Instant createdAt;
     @Column(nullable = false)
     private Instant updatedAt;
 
-    public CompanyEntity(String name, String phone, String email) {
+    public CompanyEntity(String name, String phone, String email, String password) {
         Instant now = Instant.now();
-
         this.id = null;
         this.name = name;
         this.phone = phone;
         this.email = email;
+        this.password = password;
         this.createdAt = now;
         this.updatedAt = now;
     }
@@ -51,6 +53,10 @@ public class CompanyEntity {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public Instant getCreatedAt() {

@@ -1,4 +1,4 @@
-package com.spring.skeleton.common;
+package com.spring.skeleton.util;
 
 import java.time.Instant;
 import java.time.LocalDate;

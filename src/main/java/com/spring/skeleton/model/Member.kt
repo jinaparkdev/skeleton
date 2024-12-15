@@ -1,5 +1,6 @@
 package com.spring.skeleton.model
 
+import com.spring.skeleton.common.Label
 import com.spring.skeleton.entity.MembershipMappingEntity
 import java.time.Instant
 
@@ -15,7 +16,10 @@ data class Member(
     constructor(entity: MembershipMappingEntity) : this(
         id = entity.member.id,
         name = entity.member.name,
-        membership = Label(entity.membership.name, entity.membership.id),
+        membership = Label(
+            entity.membership.name,
+            entity.membership.id
+        ),
         startDate = entity.startDate,
         endDate = entity.endDate,
         status = MembershipStatus.fromString(entity.status)

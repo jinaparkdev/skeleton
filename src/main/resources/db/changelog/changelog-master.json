@@ -249,6 +249,15 @@
                 },
                 {
                   "column": {
+                    "name": "password",
+                    "type": "varchar(255)",
+                    "constraints": {
+                      "nullable": false
+                    }
+                  }
+                },
+                {
+                  "column": {
                     "name": "created_at",
                     "type": "timestamp",
                     "constraints": {
@@ -294,90 +303,6 @@
                   }
                 }
               ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "changeSet": {
-        "id": "add-default-company",
-        "author": "jina",
-        "changes": [
-          {
-            "insert": {
-              "columns": [
-                {
-                  "column": {
-                    "name": "name",
-                    "value": "테스트"
-                  }
-                },
-                {
-                  "column": {
-                    "name": "phone",
-                    "value": "01031632102"
-                  }
-                },
-                {
-                  "column": {
-                    "name": "email",
-                    "value": "test@test.com"
-                  }
-                },
-                {
-                  "column": {
-                    "name": "created_at",
-                    "valueComputed": "CURRENT_TIMESTAMP"
-                  }
-                },
-                {
-                  "column": {
-                    "name": "updated_at",
-                    "valueComputed": "CURRENT_TIMESTAMP"
-                  }
-                }
-              ],
-              "tableName": "company"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "changeSet": {
-        "id": "add-default-membership",
-        "author": "jina",
-        "changes": [
-          {
-            "insert": {
-              "columns": [
-                {
-                  "column": {
-                    "name": "name",
-                    "value": "샘플"
-                  }
-                },
-                {
-                  "column": {
-                    "name": "price",
-                    "value": "100000"
-                  }
-                },
-                {
-                  "column": {
-                    "name": "duration",
-                    "value": "1"
-                  }
-                },
-                {
-                  "column": {
-                    "name": "company_id",
-                    "valueComputed": "(SELECT id FROM company WHERE email = 'test@test.com')"
-                  }
-                }
-              ],
-              "tableName": "membership"
             }
           }
         ]

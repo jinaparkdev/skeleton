@@ -46,10 +46,11 @@ public class MembershipEntity {
         return company;
     }
 
-    public MembershipEntity(String name, Integer price, Integer duration) {
+    public MembershipEntity(String name, Integer price, Integer duration, CompanyEntity company) {
         this.id = null;
         this.name = name;
         this.price = price;
         this.duration = duration;
+        this.company = company;
     }
 }

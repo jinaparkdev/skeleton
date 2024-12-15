@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberService {
-    MemberDetail create(String name, String phone, Long membershipId, Instant startDate);
+    MemberDetail create(String name,
+                        String phone,
+                        Long membershipId,
+                        Instant startDate);
 
     List<Member> find(Optional<String> name,
                       Optional<String> phone,
@@ -55,7 +58,10 @@ class MemberServiceImpl extends Resolver implements MemberService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public MemberDetail create(String name, String phone, Long membershipId, Instant startDate) {
+    public MemberDetail create(String name,
+                               String phone,
+                               Long membershipId,
+                               Instant startDate) {
 
         String phoneNum = ensureAvailablePhone(phone, null);
 
