@@ -48,6 +48,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(upat);
             }
 
+            Long companyId = manager.getIdFromToken(token);
+            request.setAttribute("companyId", companyId);
+
         } catch (Exception e) {
             throw new AuthenticationCredentialsNotFoundException("JWT Token is invalid");
         }

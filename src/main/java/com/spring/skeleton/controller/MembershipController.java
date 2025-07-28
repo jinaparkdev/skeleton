@@ -3,7 +3,7 @@ package com.spring.skeleton.controller;
 import com.spring.skeleton.exception.EntityNotFoundException;
 import com.spring.skeleton.model.Membership;
 import com.spring.skeleton.service.MembershipService;
-import com.spring.skeleton.util.JwtManager;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -21,7 +21,6 @@ import java.util.Optional;
 public class MembershipController {
 
     private final MembershipService service;
-    private final JwtManager jwtManager;
 
     @Data
     public static class Request {
@@ -34,26 +33,26 @@ public class MembershipController {
     }
 
     @PostMapping("/membership")
-    public ResponseEntity<Membership> create(@RequestHeader("Authorization") String token,
-                                             @RequestBody @Valid Request request) {
+    public ResponseEntity<Membership> create(HttpServletRequest request,
+                                             @RequestBody @Valid Request body) {
 
-        Long companyId = jwtManager.getIdFromToken(token);
+        Long companyId = (Long) request.getAttribute("companyId");
 
         Membership output = service.create(
-                request.getName(),
-                request.getPrice(),
-                request.getDuration(),
+                body.getName(),
+                body.getPrice(),
+                body.getDuration(),
                 companyId
                                           );
         return ResponseEntity.ok().body(output);
     }
 
     @GetMapping("/membership")
-    public ResponseEntity<List<Membership>> find(@RequestHeader("Authorization") String token,
+    public ResponseEntity<List<Membership>> find(HttpServletRequest request,
                                                  @RequestParam Optional<String> name,
                                                  @RequestParam Optional<Integer> duration) {
 
-        Long companyId = jwtManager.getIdFromToken(token);
+        Long companyId = (Long) request.getAttribute("companyId");
         List<Membership> output = service.find(name, duration, companyId);
         return ResponseEntity.ok().body(output);
     }

@@ -52,13 +52,12 @@ public class MemberController {
     }
 
     @PostMapping("/member")
-    public ResponseEntity<MemberDetail> create(@RequestBody @Valid Request request) {
-
+    public ResponseEntity<MemberDetail> create(@RequestBody @Valid Request body) {
         MemberDetail output = service.create(
-                request.getName(),
-                request.getPhone(),
-                request.getMembershipId(),
-                request.getStartDate()
+                body.getName(),
+                body.getPhone(),
+                body.getMembershipId(),
+                body.getStartDate()
                                             );
 
         return ResponseEntity.ok(output);
