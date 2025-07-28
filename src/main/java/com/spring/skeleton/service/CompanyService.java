@@ -1,6 +1,7 @@
 package com.spring.skeleton.service;
 
 import com.spring.skeleton.entity.CompanyEntity;
+import com.spring.skeleton.exception.AlreadyExistException;
 import com.spring.skeleton.model.Company;
 import com.spring.skeleton.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,17 @@ class CompanyServiceImpl implements CompanyService {
     @Override
     public Company create(String name, String phone, String email, String password) {
         password = passwordEncoder.encode(password);
+
+        if (!ensureAvailable(phone, email)) {
+            throw new AlreadyExistException("Phone or email already exists");
+        }
+
         CompanyEntity entity = new CompanyEntity(name, phone, email, password);
         companyRepository.save(entity);
         return new Company(entity);
+    }
+
+    private boolean ensureAvailable(String phone, String email) {
+        return companyRepository.findByPhoneOrEmail(phone, email).isEmpty();
     }
 }

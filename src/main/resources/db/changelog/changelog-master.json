@@ -307,6 +307,21 @@
           }
         ]
       }
+    },
+    {
+      "changeSet": {
+        "id": "add-unique-constraint-company-email",
+        "author": "jina",
+        "changes": [
+          {
+            "addUniqueConstraint": {
+              "tableName": "company",
+              "columnNames": "email",
+              "constraintName": "uk_company_email"
+            }
+          }
+        ]
+      }
     }
   ]
 }
