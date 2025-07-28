@@ -24,7 +24,7 @@ public class JwtManager {
     public String generateToken(String email, Long id) {
 
         return Jwts.builder()
-                .setSubject(email) // Subject is the email of the company
+                .setSubject(email) // 이메일 기준으로 토큰 생성
                 .claim("id", id)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))

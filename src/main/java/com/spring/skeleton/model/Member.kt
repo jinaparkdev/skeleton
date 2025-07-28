@@ -22,7 +22,7 @@ data class Member(
         ),
         startDate = entity.startDate,
         endDate = entity.endDate,
-        status = MembershipStatus.fromString(entity.status)
+        status = MembershipStatus.valueOf(entity.status)
     )
 }
 

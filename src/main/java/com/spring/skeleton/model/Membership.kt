@@ -35,13 +35,6 @@ enum class MembershipStatus {
     companion object {
 
         @JvmStatic
-        fun fromString(value: String): MembershipStatus {
-            return when (value) {
-                "New" -> New
-                "Rejoined" -> Rejoined
-                "Expired" -> Expired
-                else -> throw IllegalArgumentException("Invalid value: $value")
-            }
-        }
+        fun fromString(value: String): MembershipStatus = valueOf(value)
     }
 }

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface MemberService {
     MemberDetail create(String name,
@@ -26,12 +26,12 @@ public interface MemberService {
                         Long membershipId,
                         Instant startDate);
 
-    List<Member> find(Optional<String> name,
-                      Optional<String> phone,
-                      Optional<Long> membershipId,
-                      Optional<Instant> startDate,
-                      Optional<Instant> endDate,
-                      Optional<MembershipStatus> status);
+    List<Member> find(String name,
+                      String phone,
+                      Long membershipId,
+                      Instant startDate,
+                      Instant endDate,
+                      MembershipStatus status);
 
     MemberDetail findById(Long id) throws EntityNotFoundException;
 
@@ -81,33 +81,35 @@ class MemberServiceImpl extends Resolver implements MemberService {
     }
 
     @Override
-    public List<Member> find(Optional<String> name,
-                             Optional<String> phone,
-                             Optional<Long> membershipId,
-                             Optional<Instant> startDate,
-                             Optional<Instant> endDate,
-                             Optional<MembershipStatus> status) {
+    public List<Member> find(String name,
+                             String phone,
+                             Long membershipId,
+                             Instant startDate,
+                             Instant endDate,
+                             MembershipStatus status) {
 
         BooleanExpression matchesName =
-                name.map(mEntity.name::containsIgnoreCase).orElseGet(mEntity::isNotNull);
+                name != null ? mEntity.name.containsIgnoreCase(name) : mEntity.isNotNull();
         BooleanExpression matchesPhone =
-                phone.map(mEntity.phone::containsIgnoreCase).orElseGet(mEntity::isNotNull);
+                phone != null ? mEntity.phone.containsIgnoreCase(phone) : mEntity.isNotNull();
         BooleanExpression matchesMembershipId =
-                membershipId.map(mappingEntity.id::eq).orElseGet(mappingEntity::isNotNull);
+                membershipId != null ? mappingEntity.membership.id.eq(membershipId) : mappingEntity.isNotNull();
         BooleanExpression matchesStartDate =
-                startDate.map(mappingEntity.startDate::goe).orElseGet(mappingEntity::isNotNull);
+                startDate != null ? mappingEntity.startDate.goe(startDate) : mappingEntity.isNotNull();
         BooleanExpression matchesEndDate =
-                endDate.map(mappingEntity.startDate::loe).orElseGet(mappingEntity::isNotNull);
+                endDate != null ? mappingEntity.startDate.loe(endDate) : mappingEntity.isNotNull();
         BooleanExpression matchesStatus =
-                status.map(s -> mappingEntity.status.eq(s.name()))
-                        .orElseGet(mappingEntity::isNotNull);
+                status != null ? mappingEntity.status.eq(status.name()) : mappingEntity.isNotNull();
 
-        Predicate condition = matchesName
-                .and(matchesPhone)
-                .and(matchesMembershipId)
-                .and(matchesStartDate)
-                .and(matchesEndDate)
-                .and(matchesStatus);
+        Predicate condition =
+                Stream.of(
+                        matchesName,
+                        matchesPhone,
+                        matchesMembershipId,
+                        matchesStartDate,
+                        matchesEndDate,
+                        matchesStatus
+                         ).reduce(BooleanExpression::and).orElseThrow();
 
         List<MembershipMappingEntity> list =
                 factory.selectFrom(mappingEntity)
