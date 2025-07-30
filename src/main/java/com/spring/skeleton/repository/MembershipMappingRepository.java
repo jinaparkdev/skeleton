@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MembershipMappingRepository extends JpaRepository<MembershipMappingEntity, Long> {
     List<MembershipMappingEntity> findByVerificationCodeAndMembershipId(String verificationCode, Long membershipId);
+
+    List<MembershipMappingEntity> findByVerificationCode(String verificationCode);
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface MemberService {
@@ -32,7 +33,8 @@ public interface MemberService {
                       Long membershipId,
                       Instant startDate,
                       Instant endDate,
-                      MembershipStatus status);
+                      MembershipStatus status,
+                      String verificationCode);
 
     MemberDetail findById(Long id) throws EntityNotFoundException;
 
@@ -42,6 +44,9 @@ public interface MemberService {
                         Long membershipId,
                         Instant startDate,
                         Boolean isRejoin) throws EntityNotFoundException;
+
+    Member findByVerificationCode(String verificationCode,
+                                  Long companyId) throws EntityNotFoundException;
 }
 
 @Service
@@ -91,7 +96,8 @@ class MemberServiceImpl extends Resolver implements MemberService {
                              Long membershipId,
                              Instant startDate,
                              Instant endDate,
-                             MembershipStatus status) {
+                             MembershipStatus status,
+                             String verificationCode) {
 
         BooleanExpression matchesName =
                 name != null ? mEntity.name.containsIgnoreCase(name) : mEntity.isNotNull();
@@ -105,6 +111,8 @@ class MemberServiceImpl extends Resolver implements MemberService {
                 endDate != null ? mappingEntity.startDate.loe(endDate) : mappingEntity.isNotNull();
         BooleanExpression matchesStatus =
                 status != null ? mappingEntity.status.eq(status.name()) : mappingEntity.isNotNull();
+        BooleanExpression matchesVerificationCode =
+                verificationCode != null ? mappingEntity.verificationCode.eq(verificationCode) : mappingEntity.isNotNull();
 
         Predicate condition =
                 Stream.of(
@@ -113,7 +121,8 @@ class MemberServiceImpl extends Resolver implements MemberService {
                         matchesMembershipId,
                         matchesStartDate,
                         matchesEndDate,
-                        matchesStatus
+                        matchesStatus,
+                        matchesVerificationCode
                          ).reduce(BooleanExpression::and).orElseThrow();
 
         List<MembershipMappingEntity> list =
@@ -158,6 +167,22 @@ class MemberServiceImpl extends Resolver implements MemberService {
         }
 
         return new MemberDetail(mapping);
+    }
+
+    @Override
+    public Member findByVerificationCode(String verificationCode,
+                                         Long companyId) throws EntityNotFoundException {
+
+        Optional<MembershipMappingEntity> entity =
+                mappingRepository.findByVerificationCode(verificationCode)
+                        .stream()
+                        .filter(m -> m.getMembership().getCompany().getId().equals(companyId))
+                        .findFirst();
+
+        return entity.map(Member::new)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Member not found with verification code: " + verificationCode));
     }
 
     private String ensureAvailablePhone(String phone, Long id) {

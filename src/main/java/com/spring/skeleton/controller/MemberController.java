@@ -5,6 +5,7 @@ import com.spring.skeleton.model.MemberDetail;
 import com.spring.skeleton.model.MembershipStatus;
 import com.spring.skeleton.service.MemberService;
 import com.spring.skeleton.common.OptNotBlank;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -49,6 +50,7 @@ public class MemberController {
         @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "End date must be in YYYY-MM-DD format")
         private String endDate;
         private String status;
+        private String verificationCode;
     }
 
     @PostMapping("/member")
@@ -73,7 +75,8 @@ public class MemberController {
                 criteria.getMembershipId(),
                 toInstant(criteria.getStartDate()),
                 toInstant(criteria.getEndDate()),
-                MembershipStatus.fromString(criteria.getStatus())
+                MembershipStatus.fromString(criteria.getStatus()),
+                criteria.getVerificationCode()
                                           );
 
         return ResponseEntity.ok(output);
@@ -97,6 +100,14 @@ public class MemberController {
                 body.getStartDate(),
                 body.getIsRejoin()
                                             );
+        return ResponseEntity.ok(output);
+    }
+
+    @GetMapping("/member/verification/{code}")
+    public ResponseEntity<Member> verify(HttpServletRequest request,
+                                               @PathVariable String code) {
+        Long companyId = (Long) request.getAttribute("companyId");
+        Member output = service.findByVerificationCode(code, companyId);
         return ResponseEntity.ok(output);
     }
 }

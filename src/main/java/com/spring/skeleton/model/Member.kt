@@ -29,12 +29,14 @@ data class Member(
 data class MemberDetail(
     val summary: Member,
     val phone: String,
+    val verificationCode: String,
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {
     constructor(entity: MembershipMappingEntity) : this(
         summary = Member(entity),
         phone = entity.member.phone,
+        verificationCode = entity.verificationCode,
         createdAt = entity.member.createdAt,
         updatedAt = entity.member.updatedAt
     )
