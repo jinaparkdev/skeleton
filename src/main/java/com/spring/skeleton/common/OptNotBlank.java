@@ -1,4 +1,4 @@
-package com.spring.skeleton.util;
+package com.spring.skeleton.common;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;

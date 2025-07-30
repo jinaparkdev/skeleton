@@ -1,4 +1,4 @@
-package com.spring.skeleton.util;
+package com.spring.skeleton.common;
 
 import jakarta.validation.ConstraintValidatorContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ class OptNotBlankTest {
 
     @Test
     void testStringValidation() {
-        assertTrue(validator.isValid(null, context)); // Optional 비어있음
+        assertTrue(validator.isValid(null, context)); // null 값은 유효
         assertTrue(validator.isValid("string", context)); // 유효한 문자열
         assertFalse(validator.isValid("      ", context)); // 공백 문자열
     }

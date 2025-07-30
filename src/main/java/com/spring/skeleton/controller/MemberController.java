@@ -4,7 +4,7 @@ import com.spring.skeleton.model.Member;
 import com.spring.skeleton.model.MemberDetail;
 import com.spring.skeleton.model.MembershipStatus;
 import com.spring.skeleton.service.MemberService;
-import com.spring.skeleton.util.OptNotBlank;
+import com.spring.skeleton.common.OptNotBlank;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 import static com.spring.skeleton.util.Converter.toInstant;
 
