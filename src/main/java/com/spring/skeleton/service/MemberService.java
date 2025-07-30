@@ -24,7 +24,8 @@ public interface MemberService {
     MemberDetail create(String name,
                         String phone,
                         Long membershipId,
-                        Instant startDate);
+                        Instant startDate,
+                        String verificationCode);
 
     List<Member> find(String name,
                       String phone,
@@ -61,9 +62,12 @@ class MemberServiceImpl extends Resolver implements MemberService {
     public MemberDetail create(String name,
                                String phone,
                                Long membershipId,
-                               Instant startDate) {
+                               Instant startDate,
+                               String verificationCode) {
 
         String phoneNum = ensureAvailablePhone(phone, null);
+        String verificationCodeNum =
+                ensureAvailableVerificationCode(verificationCode, membershipId);
 
         MembershipEntity membership = resolve(membershipRepository, membershipId);
         MemberEntity member = new MemberEntity(name, phoneNum);
@@ -73,7 +77,8 @@ class MemberServiceImpl extends Resolver implements MemberService {
                 member,
                 membership,
                 startDate,
-                MembershipStatus.New.name()
+                MembershipStatus.New.name(),
+                verificationCodeNum
         );
 
         MembershipMappingEntity mappingEntity = mappingRepository.save(mapping);
@@ -148,7 +153,7 @@ class MemberServiceImpl extends Resolver implements MemberService {
         mapping.setMembership(membership);
         mapping.setStartDate(startDate);
 
-        if (isRejoin) {
+        if (isRejoin != null && isRejoin) {
             mapping.setStatus(MembershipStatus.Rejoined.name());
         }
 
@@ -162,5 +167,17 @@ class MemberServiceImpl extends Resolver implements MemberService {
                         throw new AlreadyExistException("Phone number already exists");
                 });
         return phone;
+    }
+
+    private String ensureAvailableVerificationCode(String code, Long membershipId) {
+        Boolean available =
+                mappingRepository.findByVerificationCodeAndMembershipId(code, membershipId)
+                        .isEmpty();
+
+        if (!available) {
+            throw new AlreadyExistException("Verification code already exists");
+        }
+
+        return code;
     }
 }

@@ -23,7 +23,7 @@ public class CompanyController {
     private final CustomAuthenticationManager authManager;
 
     @Data
-    public static class Request {
+    public static class Body {
         @NotBlank(message = "Name cannot be blank")
         private String name;
         @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
@@ -36,23 +36,23 @@ public class CompanyController {
     }
 
     @PostMapping("/company")
-    public ResponseEntity<Company> create(@RequestBody @Valid Request request) {
+    public ResponseEntity<Company> create(@RequestBody @Valid Body body) {
 
         Company output = service.create(
-                request.getName(),
-                request.getPhone(),
-                request.getEmail(),
-                request.getPassword()
+                body.getName(),
+                body.getPhone(),
+                body.getEmail(),
+                body.getPassword()
                                        );
 
         return ResponseEntity.ok(output);
     }
 
     @PostMapping("/company/auth")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody Request request) {
+    public ResponseEntity<AuthResponse> authenticate(@RequestBody Body body) {
 
         AuthResponse output =
-                authManager.authenticate(request.getEmail(), request.getPassword());
+                authManager.authenticate(body.getEmail(), body.getPassword());
 
         return ResponseEntity.ok(output);
     }

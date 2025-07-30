@@ -7,7 +7,13 @@ import lombok.Setter;
 import java.time.Instant;
 
 @Entity
-@Table(name = "membership_mapping")
+@Table(name = "membership_mapping",
+       uniqueConstraints =
+       @UniqueConstraint(
+               name = "uk_verification_code_membership_id",
+               columnNames = {"verification_code", "membership_id"}
+       )
+)
 @Setter
 @NoArgsConstructor
 public class MembershipMappingEntity {
@@ -33,6 +39,9 @@ public class MembershipMappingEntity {
     @Column(nullable = false)
     private Instant updatedAt;
 
+    @Column(nullable = false)
+    private String verificationCode;
+
     public Long getId() {
         return id;
     }
@@ -53,9 +62,7 @@ public class MembershipMappingEntity {
         return endDate;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public String getStatus() {return status;}
 
     public Instant getCreatedAt() {
         return createdAt;
@@ -65,10 +72,13 @@ public class MembershipMappingEntity {
         return updatedAt;
     }
 
+    public String getVerificationCode() {return verificationCode;}
+
     public MembershipMappingEntity(MemberEntity member,
                                    MembershipEntity membership,
                                    Instant startDate,
-                                   String status) {
+                                   String status,
+                                   String verificationCode) {
         Instant now = Instant.now();
 
         this.id = null;
@@ -78,6 +88,9 @@ public class MembershipMappingEntity {
         this.createdAt = now;
         this.updatedAt = now;
         this.startDate = startDate;
+        //TODO duration에 따라서 endDate를 설정해야 함
+        this.verificationCode = verificationCode != null ? verificationCode : member.getPhone()
+                .substring(member.getPhone().length() - 4);
         this.endDate = startDate.plusSeconds(60 * 60 * 24 * 30);
     }
 }

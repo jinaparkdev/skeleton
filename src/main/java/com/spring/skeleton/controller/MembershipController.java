@@ -23,7 +23,7 @@ public class MembershipController {
     private final MembershipService service;
 
     @Data
-    public static class Request {
+    public static class Body {
         @NotBlank(message = "Name cannot be null or empty")
         private String name;
         @PositiveOrZero(message = "Price must be zero or positive")
@@ -34,7 +34,7 @@ public class MembershipController {
 
     @PostMapping("/membership")
     public ResponseEntity<Membership> create(HttpServletRequest request,
-                                             @RequestBody @Valid Request body) {
+                                             @RequestBody @Valid Body body) {
 
         Long companyId = (Long) request.getAttribute("companyId");
 
@@ -59,13 +59,13 @@ public class MembershipController {
 
     @PutMapping("/membership/{id}")
     public ResponseEntity<Membership> update(@PathVariable Long id,
-                                             @RequestBody @Valid Request request) throws EntityNotFoundException {
+                                             @RequestBody @Valid Body body) throws EntityNotFoundException {
 
         Membership output = service.update(
                 id,
-                request.getName(),
-                request.getPrice(),
-                request.getDuration()
+                body.getName(),
+                body.getPrice(),
+                body.getDuration()
                                           );
 
         return ResponseEntity.ok().body(output);

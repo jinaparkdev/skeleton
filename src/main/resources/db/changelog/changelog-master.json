@@ -322,6 +322,49 @@
           }
         ]
       }
+    },
+    {
+      "changeSet": {
+        "id": "add-verification-code-to-membership-mapping",
+        "author": "jina",
+        "changes": [
+          {
+            "addColumn": {
+              "tableName": "membership_mapping",
+              "columns": [
+                {
+                  "column": {
+                    "name": "verification_code",
+                    "type": "varchar(50)"
+                  }
+                }
+              ]
+            },
+            "update": {
+              "tableName": "membership_mapping",
+              "columns": [
+                {
+                  "column": {
+                    "name": "verification_code",
+                    "value": "SELECT CONCAT(mm.id, mm.membership_id) AS id_membership\nFROM membership_mapping mm"
+                  }
+                }
+              ],
+              "where": "verification_code IS NULL"
+            },
+            "addNotNullConstraint": {
+              "tableName": "membership_mapping",
+              "columnDataType": "varchar(50)",
+              "columnName": "verification_code"
+            },
+            "addUniqueConstraint": {
+              "tableName": "membership_mapping",
+              "columnNames": "verification_code, membership_id",
+              "constraintName": "uk_verification_code_membership_id"
+            }
+          }
+        ]
+      }
     }
   ]
 }

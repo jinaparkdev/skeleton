@@ -4,11 +4,9 @@ import com.spring.skeleton.model.Member;
 import com.spring.skeleton.model.MemberDetail;
 import com.spring.skeleton.model.MembershipStatus;
 import com.spring.skeleton.service.MemberService;
+import com.spring.skeleton.util.OptNotBlank;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static com.spring.skeleton.util.Converter.toInstant;
 
@@ -26,8 +25,8 @@ public class MemberController {
     private final MemberService service;
 
     @Data
-    public static class Request {
-        @NotBlank(message = "Name cannot be null or empty")
+    public static class Body {
+        @NotBlank(message = "Name cannot be empty")
         private String name;
         @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
         private String phone;
@@ -35,11 +34,13 @@ public class MemberController {
         private Long membershipId;
         @FutureOrPresent(message = "Start date must be in the present or future")
         private Instant startDate;
+        @OptNotBlank(message = "Verification code cannot be empty")
+        private String verificationCode;
         private Boolean isRejoin;
     }
 
     @Data
-    public static class SearchRequest {
+    public static class SearchCriteria {
         private String name;
         private String phone;
         @Positive(message = "Membership ID must be positive")
@@ -52,27 +53,28 @@ public class MemberController {
     }
 
     @PostMapping("/member")
-    public ResponseEntity<MemberDetail> create(@RequestBody @Valid Request body) {
+    public ResponseEntity<MemberDetail> create(@RequestBody @Valid Body body) {
         MemberDetail output = service.create(
                 body.getName(),
                 body.getPhone(),
                 body.getMembershipId(),
-                body.getStartDate()
+                body.getStartDate(),
+                body.getVerificationCode()
                                             );
 
         return ResponseEntity.ok(output);
     }
 
     @GetMapping("/members")
-    public ResponseEntity<List<Member>> find(@Valid SearchRequest request) {
+    public ResponseEntity<List<Member>> find(@Valid SearchCriteria criteria) {
 
         List<Member> output = service.find(
-                request.getName(),
-                request.getPhone(),
-                request.getMembershipId(),
-                toInstant(request.getStartDate()),
-                toInstant(request.getEndDate()),
-                MembershipStatus.fromString(request.getStatus())
+                criteria.getName(),
+                criteria.getPhone(),
+                criteria.getMembershipId(),
+                toInstant(criteria.getStartDate()),
+                toInstant(criteria.getEndDate()),
+                MembershipStatus.fromString(criteria.getStatus())
                                           );
 
         return ResponseEntity.ok(output);
@@ -86,15 +88,15 @@ public class MemberController {
 
     @PutMapping("/member/{id}")
     public ResponseEntity<MemberDetail> update(@PathVariable Long id,
-                                               @RequestBody @Valid Request request) {
+                                               @RequestBody @Valid Body body) {
 
         MemberDetail output = service.update(
                 id,
-                request.getName(),
-                request.getPhone(),
-                request.getMembershipId(),
-                request.getStartDate(),
-                request.getIsRejoin()
+                body.getName(),
+                body.getPhone(),
+                body.getMembershipId(),
+                body.getStartDate(),
+                body.getIsRejoin()
                                             );
         return ResponseEntity.ok(output);
     }
