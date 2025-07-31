@@ -105,7 +105,7 @@ public class MemberController {
 
     @GetMapping("/member/verification/{code}")
     public ResponseEntity<Member> verify(HttpServletRequest request,
-                                               @PathVariable String code) {
+                                         @PathVariable String code) {
         Long companyId = (Long) request.getAttribute("companyId");
         Member output = service.findByVerificationCode(code, companyId);
         return ResponseEntity.ok(output);
