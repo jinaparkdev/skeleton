@@ -27,7 +27,7 @@ public class CustomAuthenticationManager implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         CompanyEntity company = companyRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid credentials"));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다: " + email));
 
         return new CustomUserDetails(
                 company.getId(),
@@ -39,12 +39,12 @@ public class CustomAuthenticationManager implements UserDetailsService {
 
     public AuthResponse authenticate(String email, String password) {
         CompanyEntity entity = companyRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Invalid credentials"));
+                .orElseThrow(() -> new EntityNotFoundException("이메일과 비밀번호를 확인해주세요"));
         boolean matched =
                 passwordEncoder.matches(password, entity.getPassword());
 
         if (!matched) {
-            throw new EntityNotFoundException("Password does not match");
+            throw new EntityNotFoundException("이메일과 비밀번호를 확인해주세요");
         }
 
         String token = jwtManager.generateToken(entity.getEmail(), entity.getId());

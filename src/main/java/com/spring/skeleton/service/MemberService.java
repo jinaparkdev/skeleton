@@ -182,7 +182,7 @@ class MemberServiceImpl extends Resolver implements MemberService {
         return entity.map(Member::new)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
-                                "Member not found with verification code: " + verificationCode));
+                                "코드를 확인해주세요.: " + verificationCode));
     }
 
     private String ensureAvailablePhone(String phone, Long id) {
@@ -200,7 +200,7 @@ class MemberServiceImpl extends Resolver implements MemberService {
                         .isEmpty();
 
         if (!available) {
-            throw new AlreadyExistException("Verification code already exists");
+            throw new AlreadyExistException("이미 존재하는 인증 코드입니다: " + code);
         }
 
         return code;
