@@ -26,15 +26,15 @@ public class MemberController {
 
     @Data
     public static class Body {
-        @NotBlank(message = "Name cannot be empty")
+        @NotBlank(message = "이름은 필수입니다")
         private String name;
-        @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
+        @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "전화번호는 10자리 이상 15자리 이하의 숫자여야 합니다")
         private String phone;
-        @Positive(message = "Membership ID must be positive")
+        @Positive(message = "멤버십 아이디는 필수입니다")
         private Long membershipId;
-        @FutureOrPresent(message = "Start date must be in the present or future")
+        @FutureOrPresent(message = "시작일은 금일 이후여야 합니다")
         private Instant startDate;
-        @OptNotBlank(message = "Verification code cannot be empty")
+        @OptNotBlank(message = "인증코드는 빈 값으로 생성할 수 없습니다.")
         private String verificationCode;
         private Boolean isRejoin;
     }
@@ -43,11 +43,11 @@ public class MemberController {
     public static class SearchCriteria {
         private String name;
         private String phone;
-        @Positive(message = "Membership ID must be positive")
+        @Positive(message = "멤버십 아이디는 필수입니다")
         private Long membershipId;
-        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Start date must be in YYYY-MM-DD format")
+        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "시작일은 YYYY-MM-DD 형식이어야 합니다.")
         private String startDate;
-        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "End date must be in YYYY-MM-DD format")
+        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "종료일은 YYYY-MM-DD 형식이어야 합니다.")
         private String endDate;
         private String status;
         private String verificationCode;

@@ -24,11 +24,11 @@ public class MembershipController {
 
     @Data
     public static class Body {
-        @NotBlank(message = "Name cannot be null or empty")
+        @NotBlank(message = "이름은 필수입니다")
         private String name;
-        @PositiveOrZero(message = "Price must be zero or positive")
+        @PositiveOrZero(message = "가격은 0 이상이어야 합니다")
         private Integer price;
-        @Positive(message = "Duration must be positive")
+        @Positive(message = "기간은 1 이상이어야 합니다")
         private Integer duration;
     }
 

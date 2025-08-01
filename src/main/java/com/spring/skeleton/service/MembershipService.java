@@ -91,7 +91,7 @@ class MembershipServiceImpl extends Resolver implements MembershipService {
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("Membership not found");
+            throw new EntityNotFoundException("멤버십을 찾을 수 없습니다: " + id);
         }
     }
 }

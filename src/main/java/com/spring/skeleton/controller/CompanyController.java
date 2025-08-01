@@ -24,14 +24,14 @@ public class CompanyController {
 
     @Data
     public static class Body {
-        @NotBlank(message = "Name cannot be blank")
+        @NotBlank(message = "이름은 필수입니다")
         private String name;
-        @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
+        @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "전화번호는 10자리 이상 15자리 이하의 숫자여야 합니다")
         private String phone;
-        @Email(message = "Invalid email format")
+        @Email(message = "유효하지 않은 이메일입니다.")
         private String email;
         //TODO 비밀번호 정책 추가
-        @NotBlank(message = "Password cannot be blank")
+        @NotBlank(message = "비밀번호는 필수입니다")
         private String password;
     }
 

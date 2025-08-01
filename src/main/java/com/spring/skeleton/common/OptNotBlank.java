@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = OptNotBlank.Validator.class)
 @Documented
 public @interface OptNotBlank {
-    String message() default "Value cannot be blank when present";
+    String message() default "값이 존재하는 경우 공백이 아니어야 합니다.";
 
     Class<?>[] groups() default {};
 
