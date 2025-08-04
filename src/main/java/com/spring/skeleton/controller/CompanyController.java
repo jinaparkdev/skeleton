@@ -1,9 +1,7 @@
 package com.spring.skeleton.controller;
 
-import com.spring.skeleton.model.AuthResponse;
 import com.spring.skeleton.model.Company;
 import com.spring.skeleton.service.CompanyService;
-import com.spring.skeleton.service.CustomAuthenticationManager;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
 
     private final CompanyService service;
-    private final CustomAuthenticationManager authManager;
 
     @Data
     public static class Body {
@@ -44,15 +41,6 @@ public class CompanyController {
                 body.getEmail(),
                 body.getPassword()
                                        );
-
-        return ResponseEntity.ok(output);
-    }
-
-    @PostMapping("/company/auth")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody Body body) {
-
-        AuthResponse output =
-                authManager.authenticate(body.getEmail(), body.getPassword());
 
         return ResponseEntity.ok(output);
     }

@@ -23,6 +23,7 @@ It basically provides the system for managing gym(company) information, includin
 - **Query Builder**: QueryDSL 5.0.0
 - **Security**: Spring Security + JWT (jjwt 0.11.5)
 - **Migration**: Liquibase 4.30.0
+- **Cache**: Redis 7.2 (Spring Data Redis)
 - **Testing**: JUnit 5, Spring Security Test
 - **Development**: Lombok, Spring Boot DevTools
 
@@ -51,13 +52,13 @@ git clone https://github.com/jinaparkdev/skeleton-backend.git
 cd skeleton-backend
 ```
 
-2. **Configure the database**
+2. **Configure MySQL & Redis (Docker)**
 ```
-# Start MySQL database using Docker Compose
+# Start MySQL and Redis using Docker Compose
 cd docker
 docker-compose -f docker.yml up -d
 
-# Verify MySQL is running
+# Verify MySQL and Redis are running
 docker ps
 ```
 

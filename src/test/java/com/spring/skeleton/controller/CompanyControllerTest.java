@@ -1,8 +1,6 @@
 package com.spring.skeleton.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.skeleton.exception.EntityNotFoundException;
-import com.spring.skeleton.model.AuthResponse;
 import com.spring.skeleton.model.Company;
 import com.spring.skeleton.service.CompanyService;
 import com.spring.skeleton.service.CustomAuthenticationManager;
@@ -59,40 +57,5 @@ class CompanyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.email").value(email));
-    }
-
-    @Test
-    void authenticate() throws Exception {
-        CompanyController.Body body = new CompanyController.Body();
-        body.setEmail(email);
-        body.setPassword(password);
-
-        Company mockCompany = new Company(1L, name, email, phone);
-
-        AuthResponse mockAuthResponse = new AuthResponse("jwt-token", mockCompany);
-
-        when(authManager.authenticate(email, password))
-                .thenReturn(mockAuthResponse);
-
-        mockMvc.perform(post("/company/auth")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("jwt-token"));
-    }
-
-    @Test
-    void authenticateWithInvalidCredentials() throws Exception {
-        CompanyController.Body body = new CompanyController.Body();
-        body.setEmail(email);
-        body.setPassword("wrong-password");
-
-        when(authManager.authenticate(email, "wrong-password"))
-                .thenThrow(new EntityNotFoundException("Invalid credentials"));
-
-        mockMvc.perform(post("/company/auth")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(body)))
-                .andExpect(status().isNotFound());
     }
 }

@@ -15,6 +15,18 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_PASSWORD=skeleton
+    command: redis-server --appendonly yes --requirepass skeleton
+    restart: unless-stopped
 
 volumes:
   mysql-data:
+  redis-data:
