@@ -47,8 +47,17 @@ public class CustomAuthenticationManager implements UserDetailsService {
             throw new EntityNotFoundException("이메일과 비밀번호를 확인해주세요");
         }
 
-        String token = jwtManager.generateToken(entity.getEmail(), entity.getId());
+        String accessToken = jwtManager.generate(entity.getEmail(), entity.getId(), false);
 
-        return new AuthResponse(token, new Company(entity));
+        return new AuthResponse(accessToken, new Company(entity));
+    }
+
+    public AuthResponse authenticate(Long id) {
+        CompanyEntity entity = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("회사를 찾을 수 없습니다: " + id));
+
+        String accessToken = jwtManager.generate(entity.getEmail(), entity.getId(), false);
+
+        return new AuthResponse(accessToken, new Company(entity));
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -37,10 +38,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         try {
-            String subject = manager.getSubjectFromToken(token);
+            String subject = manager.getSubject(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
 
-            if (manager.validateToken(token)) {
+            if (manager.isValid(token)) {
                 UsernamePasswordAuthenticationToken upat = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
 
@@ -48,7 +49,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(upat);
             }
 
-            Long companyId = manager.getIdFromToken(token);
+            Long companyId = manager.getId(token);
             request.setAttribute("companyId", companyId);
 
         } catch (Exception e) {
@@ -60,6 +61,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NotNull HttpServletRequest request) {
-        return new AntPathRequestMatcher("/company/**").matches(request);
+        return new OrRequestMatcher(
+                new AntPathRequestMatcher("/auth"),
+                new AntPathRequestMatcher("/company", "POST")
+        ).matches(request);
     }
 }
