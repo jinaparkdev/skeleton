@@ -67,6 +67,7 @@ public class AuthController {
 
     @PostMapping("/auth/current")
     public ResponseEntity<AuthResponse> current(HttpServletRequest request) {
+
         Long companyId = (Long) request.getAttribute("companyId");
         String refreshToken = (String) redis.opsForValue().get(REFRESH_TOKEN_PREFIX + companyId);
 
