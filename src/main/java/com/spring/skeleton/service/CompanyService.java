@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 public interface CompanyService {
     Company create(String name, String phone, String email, String password);
+
+    boolean isAvailablePhone(String phone);
+
+    boolean isAvailableEmail(String email);
 }
 
 @Service
@@ -24,12 +28,22 @@ class CompanyServiceImpl implements CompanyService {
         password = passwordEncoder.encode(password);
 
         if (!ensureAvailable(phone, email)) {
-            throw new AlreadyExistException("Phone or email already exists");
+            throw new AlreadyExistException("이미 사용중인 전화번호 또는 이메일입니다.");
         }
 
         CompanyEntity entity = new CompanyEntity(name, phone, email, password);
         companyRepository.save(entity);
         return new Company(entity);
+    }
+
+    @Override
+    public boolean isAvailablePhone(String phone) {
+        return companyRepository.findByPhone(phone).isEmpty();
+    }
+
+    @Override
+    public boolean isAvailableEmail(String email) {
+        return companyRepository.findByEmail(email).isEmpty();
     }
 
     private boolean ensureAvailable(String phone, String email) {

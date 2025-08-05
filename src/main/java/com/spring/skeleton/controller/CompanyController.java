@@ -9,9 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,4 +42,17 @@ public class CompanyController {
 
         return ResponseEntity.ok(output);
     }
+
+    @RequestMapping(value = "/company/available/phone/{phone}", method = RequestMethod.HEAD)
+    public ResponseEntity<Void> isAvailablePhone(@PathVariable String phone) {
+        boolean available = service.isAvailablePhone(phone);
+        return available ? ResponseEntity.ok().build() : ResponseEntity.status(409).build();
+    }
+
+    @RequestMapping(value = "/company/available/email/{email}", method = RequestMethod.HEAD)
+    public ResponseEntity<Void> isAvailableEmail(@PathVariable String email) {
+        boolean available = service.isAvailableEmail(email);
+        return available ? ResponseEntity.ok().build() : ResponseEntity.status(409).build();
+    }
+
 }

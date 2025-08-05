@@ -63,7 +63,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(@NotNull HttpServletRequest request) {
         return new OrRequestMatcher(
                 new AntPathRequestMatcher("/auth"),
-                new AntPathRequestMatcher("/company", "POST")
+                new AntPathRequestMatcher("/company/**", "POST"),
+                new AntPathRequestMatcher("/company/**", "HEAD")
         ).matches(request);
     }
 }
