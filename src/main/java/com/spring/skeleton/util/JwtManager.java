@@ -20,40 +20,37 @@ public class JwtManager {
     public JwtManager(@Value("${jwt.secret}") String secret,
                       @Value("${jwt.expiration}") Long expiration,
                       @Value("${jwt.expiration.refresh}") Long refreshExpiration) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expiration = expiration;
         this.refreshExpiration = refreshExpiration;
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String generate(String email, Long id, Boolean isRefreshToken) {
-
-        Long expiration = isRefreshToken ? refreshExpiration : this.expiration;
-
         return Jwts.builder()
-                .setSubject(email) // 이메일 기준으로 토큰 생성
+                .setSubject(email)
                 .claim("id", id)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + (isRefreshToken ? refreshExpiration : expiration)))
+                .signWith(key)
+                .compact();
+    }
+
+    public String generate(String email, Long id, Long customExpiration) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("id", id)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + customExpiration))
                 .signWith(key)
                 .compact();
     }
 
     public String getSubject(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(subtractBearer(token))
-                .getBody();
-        return claims.getSubject();
+        return parseClaims(token).getSubject();
     }
 
     public Long getId(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(subtractBearer(token))
-                .getBody();
-        return claims.get("id", Long.class);
+        return parseClaims(token).get("id", Long.class);
     }
 
     public boolean isValid(String token) {
@@ -61,24 +58,19 @@ public class JwtManager {
     }
 
     public Instant getExpiration(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(subtractBearer(token))
-                .getBody();
-        return claims.getExpiration().toInstant();
+        return parseClaims(token).getExpiration().toInstant();
     }
 
     private boolean isTokenExpired(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(subtractBearer(token))
-                .getBody();
-        return claims.getExpiration().before(new Date());
+        return parseClaims(token).getExpiration().before(new Date());
     }
 
-    private String subtractBearer(String token) {
-        return token.substring(7);
+    private Claims parseClaims(String token) {
+        String actualToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(actualToken)
+                .getBody();
     }
 }
