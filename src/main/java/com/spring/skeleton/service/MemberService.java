@@ -21,37 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public interface MemberService {
-    MemberDetail create(String name,
-                        String phone,
-                        Long membershipId,
-                        Instant startDate,
-                        String verificationCode);
-
-    List<Member> find(String name,
-                      String phone,
-                      Long membershipId,
-                      Instant startDate,
-                      Instant endDate,
-                      MembershipStatus status,
-                      String verificationCode);
-
-    MemberDetail findById(Long id) throws EntityNotFoundException;
-
-    MemberDetail update(Long id,
-                        String name,
-                        String phone,
-                        Long membershipId,
-                        Instant startDate,
-                        Boolean isRejoin) throws EntityNotFoundException;
-
-    Member findByVerificationCode(String verificationCode,
-                                  Long companyId) throws EntityNotFoundException;
-}
-
 @Service
 @RequiredArgsConstructor
-class MemberServiceImpl extends Resolver implements MemberService {
+public class MemberService extends Resolver {
 
     private final MemberRepository memberRepository;
     private final MembershipRepository membershipRepository;
@@ -62,7 +34,6 @@ class MemberServiceImpl extends Resolver implements MemberService {
     private final QMembershipMappingEntity mappingEntity =
             QMembershipMappingEntity.membershipMappingEntity;
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public MemberDetail create(String name,
                                String phone,
@@ -90,7 +61,6 @@ class MemberServiceImpl extends Resolver implements MemberService {
         return new MemberDetail(mappingEntity);
     }
 
-    @Override
     public List<Member> find(String name,
                              String phone,
                              Long membershipId,
@@ -134,7 +104,6 @@ class MemberServiceImpl extends Resolver implements MemberService {
         return list.stream().map(Member::new).toList();
     }
 
-    @Override
     public MemberDetail findById(Long id) throws EntityNotFoundException {
         MembershipMappingEntity mapping = mappingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Member not found"));
@@ -142,8 +111,6 @@ class MemberServiceImpl extends Resolver implements MemberService {
         return new MemberDetail(mapping);
     }
 
-    @Override
-    @Transactional(rollbackOn = Exception.class)
     public MemberDetail update(Long id,
                                String name,
                                String phone,
@@ -169,7 +136,6 @@ class MemberServiceImpl extends Resolver implements MemberService {
         return new MemberDetail(mapping);
     }
 
-    @Override
     public Member findByVerificationCode(String verificationCode,
                                          Long companyId) throws EntityNotFoundException {
 
@@ -195,7 +161,7 @@ class MemberServiceImpl extends Resolver implements MemberService {
     }
 
     private String ensureAvailableVerificationCode(String code, Long membershipId) {
-        Boolean available =
+        boolean available =
                 mappingRepository.findByVerificationCodeAndMembershipId(code, membershipId)
                         .isEmpty();
 

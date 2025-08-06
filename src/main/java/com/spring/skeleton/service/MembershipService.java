@@ -19,23 +19,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-public interface MembershipService {
-
-    Membership create(String name, Integer price, Integer duration, Long companyId);
-
-    List<Membership> find(Optional<String> name, Optional<Integer> duration, Long companyId);
-
-    Membership update(Long id,
-                      String name,
-                      Integer price,
-                      Integer duration) throws EntityNotFoundException;
-
-    void delete(Long id);
-}
-
 @Service
 @RequiredArgsConstructor
-class MembershipServiceImpl extends Resolver implements MembershipService {
+public class MembershipService extends Resolver {
 
     private final MembershipRepository repository;
     private final CompanyRepository companyRepository;
@@ -43,7 +29,6 @@ class MembershipServiceImpl extends Resolver implements MembershipService {
 
     private final QMembershipEntity entity = QMembershipEntity.membershipEntity;
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public Membership create(String name, Integer price, Integer duration, Long companyId) {
         CompanyEntity company = resolve(companyRepository, companyId);
@@ -51,7 +36,6 @@ class MembershipServiceImpl extends Resolver implements MembershipService {
         return new Membership(m);
     }
 
-    @Override
     public List<Membership> find(Optional<String> name,
                                  Optional<Integer> duration,
                                  Long companyId) {
@@ -71,7 +55,6 @@ class MembershipServiceImpl extends Resolver implements MembershipService {
         return list.stream().map(Membership::new).toList();
     }
 
-    @Override
     @Transactional(rollbackOn = Exception.class)
     public Membership update(Long id,
                              String name,
@@ -86,7 +69,6 @@ class MembershipServiceImpl extends Resolver implements MembershipService {
         return new Membership(m);
     }
 
-    @Override
     public void delete(Long id) {
         try {
             repository.deleteById(id);

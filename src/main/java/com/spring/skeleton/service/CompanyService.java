@@ -8,22 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-public interface CompanyService {
-    Company create(String name, String phone, String email, String password);
-
-    boolean isAvailablePhone(String phone);
-
-    boolean isAvailableEmail(String email);
-}
-
 @Service
 @RequiredArgsConstructor
-class CompanyServiceImpl implements CompanyService {
+public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
     public Company create(String name, String phone, String email, String password) {
         password = passwordEncoder.encode(password);
 
@@ -36,12 +27,10 @@ class CompanyServiceImpl implements CompanyService {
         return new Company(entity);
     }
 
-    @Override
     public boolean isAvailablePhone(String phone) {
         return companyRepository.findByPhone(phone).isEmpty();
     }
 
-    @Override
     public boolean isAvailableEmail(String email) {
         return companyRepository.findByEmail(email).isEmpty();
     }
