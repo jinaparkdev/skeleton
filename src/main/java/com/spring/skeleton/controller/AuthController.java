@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,7 @@ public class AuthController {
         private String password;
     }
 
-    @PostMapping("/auth")
+    @PostMapping("/signin")
     public ResponseEntity<AuthResponse> authenticate(HttpServletResponse response,
                                                      @RequestBody Body body) {
 
@@ -65,7 +66,7 @@ public class AuthController {
         return ResponseEntity.ok(auth);
     }
 
-    @PostMapping("/auth/current")
+    @PostMapping("/current")
     public ResponseEntity<AuthResponse> current(HttpServletRequest request) {
 
         Long companyId = (Long) request.getAttribute("companyId");
@@ -77,5 +78,13 @@ public class AuthController {
         }
 
         return ResponseEntity.status(401).build();
+    }
+
+    @GetMapping("/signout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        Long companyId = (Long) request.getAttribute("companyId");
+        redis.delete(REFRESH_TOKEN_PREFIX + companyId);
+
+        return ResponseEntity.ok().build();
     }
 }
