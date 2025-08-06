@@ -31,7 +31,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests((req) -> {
                     //TODO: 권한 및 역할에 따른 접근 제어
                     req.requestMatchers("/**").permitAll();
-                    req.requestMatchers("/auth").permitAll();
                     req.requestMatchers("/error").permitAll();
                     req.anyRequest().authenticated();
                 })
