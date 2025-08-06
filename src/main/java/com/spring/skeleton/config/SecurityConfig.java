@@ -15,29 +15,27 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+public class SecurityConfig implements WebMvcConfigurer {
+
+    private final LoggingInterceptor loggingInterceptor;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("[SECURITY] SecurityFilterChain 생성됨");
         return http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((req) -> {
-                    log.info("[SECURITY] authorizeHttpRequests 설정 시작");
                     //TODO: 권한 및 역할에 따른 접근 제어
                     req.requestMatchers("/**").permitAll();
                     req.requestMatchers("/auth").permitAll();
                     req.requestMatchers("/error").permitAll();
-                    log.info("[SECURITY] 모든 경로 permitAll, /auth permitAll, /error permitAll 설정 완료");
                     req.anyRequest().authenticated();
                 })
                 .httpBasic(Customizer.withDefaults())
@@ -65,5 +63,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggingInterceptor).addPathPatterns("/**");
     }
 }
